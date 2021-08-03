@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    tools:context=".AddNoteActivity">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tiTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_note_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:textSize="18sp"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tiDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/enter_note_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tiTitle">
+
+
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start|top"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:textSize="18sp"
+            tools:ignore="LabelFor" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Spinner
+        android:id="@+id/spinnerDays"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:entries="@array/DaysOfWeek"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tiDescription" />
+
+    <RadioGroup
+        android:id="@+id/rgPriority"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerDays">
+
+        <RadioButton
+            android:id="@+id/rbPriority1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/holo_red_light"
+            android:text="@string/high"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rbPriority2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/holo_orange_light"
+            android:checked="true"
+            android:text="@string/normal"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rbPriority3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/holo_green_light"
+            android:text="@string/low"
+            android:textSize="18sp" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddNote"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/add"
+        android:textSize="24sp"
+        app:cornerRadius="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rgPriority" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
