@@ -25,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NotesAdapter adapter;
     private NotesDBHelper dbHelper;
+    private SQLiteDatabase database;
 
-    public static final ArrayList<Note> notes = new ArrayList<>();
+    private final ArrayList<Note> notes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,49 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new NotesDBHelper(this);
 
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        database = dbHelper.getWritableDatabase();
 
-        /*if (notes.isEmpty()) {
-            notes.add(new Note("Test1", "Descr1", "monday", 1));
-            notes.add(new Note("Test2", "Descr2", "saturday", 2));
-            notes.add(new Note("Test3", "Descr3", "friday", 3));
-            notes.add(new Note("Test4", "Descr4", "saturday", 3));
-            notes.add(new Note("Test5", "Descr5", "friday", 2));
-            notes.add(new Note("Test6", "Descr6", "saturday", 1));
-            notes.add(new Note("Test7", "Descr7", "monday", 3));
-        }
+        getData();
 
-        for (Note note : notes) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(NotesContract.NotesEntry.COLUMN_TITLE, note.getTitle());
-            contentValues.put(NotesContract.NotesEntry.COLUMN_DESCRIPTION, note.getDescription());
-            contentValues.put(NotesContract.NotesEntry.COLUMN_DAY_OF_WEEK, note.getDayOfWeek());
-            contentValues.put(NotesContract.NotesEntry.COLUMN_PRIORITY, note.getPriority());
-            database.insert(NotesContract.NotesEntry.TABLE_NAME, null, contentValues);
-        }*/
-
-        ArrayList<Note> notesFromDB = new ArrayList<>();
-
-        @SuppressLint("Recycle")
-        Cursor cursor = database.query(NotesContract.NotesEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        while (cursor.moveToNext()) {
-            String title = cursor.getString(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_TITLE));
-            String description = cursor.getString(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_DESCRIPTION));
-            String day_of_week = cursor.getString(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_DAY_OF_WEEK));
-            int priority = cursor.getInt(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_PRIORITY));
-            Note note = new Note(title, description, day_of_week, priority);
-            notesFromDB.add(note);
-        }
-        cursor.close();
-
-        adapter = new NotesAdapter(notesFromDB);
+        adapter = new NotesAdapter(notes);
         binding.rvNotes.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
         binding.rvNotes.setAdapter(adapter);
@@ -123,7 +86,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteNote(int position) {
-        notes.remove(position);
+        int id = notes.get(position).getId();
+        String where = NotesContract.NotesEntry._ID + " = ?";
+        String[] whereArgs = new String[]{Integer.toString(id)};
+        database.delete(NotesContract.NotesEntry.TABLE_NAME, where, whereArgs);
+        getData();
         adapter.notifyDataSetChanged();
+    }
+
+    private void getData() {
+        notes.clear();
+        Cursor cursor = database.query(NotesContract.NotesEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                NotesContract.NotesEntry.COLUMN_PRIORITY);
+
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(NotesContract.NotesEntry._ID));
+            String title = cursor.getString(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_TITLE));
+            String description = cursor.getString(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_DESCRIPTION));
+            int day_of_week = cursor.getInt(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_DAY_OF_WEEK));
+            int priority = cursor.getInt(cursor.getColumnIndex(NotesContract.NotesEntry.COLUMN_PRIORITY));
+            Note note = new Note(id, title, description, day_of_week, priority);
+            notes.add(note);
+        }
+        cursor.close();
     }
 }
