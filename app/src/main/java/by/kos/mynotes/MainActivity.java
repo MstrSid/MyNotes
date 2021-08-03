@@ -1,7 +1,10 @@
 package by.kos.mynotes;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +17,7 @@ import by.kos.mynotes.model.Note;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
+    private NotesAdapter adapter;
 
     public static final ArrayList<Note> notes = new ArrayList<>();
 
@@ -33,9 +37,33 @@ public class MainActivity extends AppCompatActivity {
             notes.add(new Note("Test7", "Descr7", "monday", 3));
         }
 
-        NotesAdapter adapter = new NotesAdapter(notes);
+        adapter = new NotesAdapter(notes);
         binding.rvNotes.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.rvNotes.setAdapter(adapter);
+        adapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
+            @Override
+            public void onNoteClick(int position) {
+            }
+
+            @Override
+            public void onNoteLongClick(int position) {
+                deleteNote(position);
+            }
+        });
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                deleteNote(viewHolder.getAdapterPosition());
+            }
+        });
+
+        itemTouchHelper.attachToRecyclerView(binding.rvNotes);
 
         binding.fabAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,5 +72,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openAddNoteIntent);
             }
         });
+    }
+
+    private void deleteNote(int position){
+        notes.remove(position);
+        adapter.notifyDataSetChanged();
     }
 }

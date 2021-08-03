@@ -1,6 +1,7 @@
 package by.kos.mynotes;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -14,11 +15,20 @@ import by.kos.mynotes.model.Note;
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 
     private ArrayList<Note> notes;
+    private OnNoteClickListener onNoteClickListener;
+
+    public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
+        this.onNoteClickListener = onNoteClickListener;
+    }
 
     public NotesAdapter(ArrayList<Note> notes) {
         this.notes = notes;
     }
 
+    interface OnNoteClickListener {
+        void onNoteClick(int position);
+        void onNoteLongClick(int position);
+    }
 
     @NonNull
     @Override
@@ -34,7 +44,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         holder.binding.tvDayOfWeek.setText(note.getDayOfWeek());
         int colorId;
         int priority = note.getPriority();
-        switch (priority){
+        switch (priority) {
             case 1:
                 colorId = holder.binding.getRoot().getResources().getColor(android.R.color.holo_red_light);
                 break;
@@ -60,6 +70,23 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         public NotesViewHolder(@NonNull NoteItemBinding itemViewBinding) {
             super(itemViewBinding.getRoot());
             binding = itemViewBinding;
+            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(onNoteClickListener != null){
+                        onNoteClickListener.onNoteClick(getAdapterPosition());
+                    }
+                }
+            });
+            binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if(onNoteClickListener != null){
+                        onNoteClickListener.onNoteLongClick(getAdapterPosition());
+                    }
+                    return true;
+                }
+            });
         }
     }
 
