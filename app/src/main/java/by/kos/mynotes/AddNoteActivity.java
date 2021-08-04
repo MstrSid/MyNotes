@@ -1,24 +1,21 @@
 package by.kos.mynotes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import by.kos.mynotes.contracts.NotesContract;
+import by.kos.mynotes.database.NotesDatabase;
 import by.kos.mynotes.databinding.ActivityAddNoteBinding;
-import by.kos.mynotes.helpers.NotesDBHelper;
 import by.kos.mynotes.model.Note;
 
 public class AddNoteActivity extends AppCompatActivity {
     private ActivityAddNoteBinding binding;
-
-    private NotesDBHelper dbHelper;
-    private SQLiteDatabase database;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +23,7 @@ public class AddNoteActivity extends AppCompatActivity {
         binding = ActivityAddNoteBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
-        dbHelper = new NotesDBHelper(this);
-        database = dbHelper.getWritableDatabase();
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         binding.btnAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,15 +39,9 @@ public class AddNoteActivity extends AppCompatActivity {
                 } else if (binding.rgPriority.getCheckedRadioButtonId() == binding.rbPriority3.getId()) {
                     priority = 3;
                 }
-                if(!title.isEmpty() && !description.isEmpty()) {
-
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(NotesContract.NotesEntry.COLUMN_TITLE, title);
-                    contentValues.put(NotesContract.NotesEntry.COLUMN_DESCRIPTION, description);
-                    contentValues.put(NotesContract.NotesEntry.COLUMN_DAY_OF_WEEK, day+1);
-                    contentValues.put(NotesContract.NotesEntry.COLUMN_PRIORITY, priority);
-                    database.insert(NotesContract.NotesEntry.TABLE_NAME, null ,contentValues);
-
+                if (!title.isEmpty() && !description.isEmpty()) {
+                    Note note = new Note(title, description, day, priority);
+                    viewModel.insertNote(note);
                     Intent openMainIntent = new Intent(AddNoteActivity.this, MainActivity.class);
                     startActivity(openMainIntent);
                 } else {

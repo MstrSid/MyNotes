@@ -1,13 +1,17 @@
 package by.kos.mynotes.model;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 
-import by.kos.mynotes.MainActivity;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import by.kos.mynotes.R;
 
+@Entity(tableName = "notes")
 public class Note {
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
     private String description;
@@ -16,6 +20,14 @@ public class Note {
 
     public Note(int id, String title, String description, int dayOfWeek, int priority) {
         this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dayOfWeek = dayOfWeek;
+        this.priority = priority;
+    }
+
+    @Ignore
+    public Note(String title, String description, int dayOfWeek, int priority) {
         this.title = title;
         this.description = description;
         this.dayOfWeek = dayOfWeek;
@@ -42,29 +54,49 @@ public class Note {
         return priority;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDayOfWeek(int dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
     public static String getDayAsString(Context context, int dayNumber) {
         String[] days = context.getResources().getStringArray(R.array.DaysOfWeek);
         String day = "";
         switch (dayNumber) {
-            case 1:
+            case 0:
                 day = days[0];
                 break;
-            case 2:
+            case 1:
                 day = days[1];
                 break;
-            case 3:
+            case 2:
                 day = days[2];
                 break;
-            case 4:
+            case 3:
                 day = days[3];
                 break;
-            case 5:
+            case 4:
                 day = days[4];
                 break;
-            case 6:
+            case 5:
                 day = days[5];
                 break;
-            case 7:
+            case 6:
                 day = days[6];
                 break;
         }

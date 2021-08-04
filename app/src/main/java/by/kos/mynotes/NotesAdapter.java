@@ -8,13 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import by.kos.mynotes.databinding.NoteItemBinding;
 import by.kos.mynotes.model.Note;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 
-    private ArrayList<Note> notes;
+    private List<Note> notes;
     private OnNoteClickListener onNoteClickListener;
 
     public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
@@ -27,6 +28,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     interface OnNoteClickListener {
         void onNoteClick(int position);
+
         void onNoteLongClick(int position);
     }
 
@@ -34,6 +36,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     @Override
     public NotesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new NotesViewHolder(NoteItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
+        notifyDataSetChanged();
+    }
+
+    public List<Note> getNotes() {
+        return notes;
     }
 
     @Override
@@ -73,7 +84,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             binding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(onNoteClickListener != null){
+                    if (onNoteClickListener != null) {
                         onNoteClickListener.onNoteClick(getAdapterPosition());
                     }
                 }
@@ -81,7 +92,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if(onNoteClickListener != null){
+                    if (onNoteClickListener != null) {
                         onNoteClickListener.onNoteLongClick(getAdapterPosition());
                     }
                     return true;
